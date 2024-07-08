@@ -18,14 +18,21 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
+
+    /**
+     * 음식점 리스트 확인
+     * - 예약 상태도 확인 가능
+     */
     @GetMapping("/restaurant/list")
     ResponseEntity<?> getRestaurantList() {
-        List<Restaurant> list = restaurantService.allRestaurants();
-        // TODO: 예약 정보 같이
+        var list = restaurantService.allRestaurants();
         return ResponseEntity.ok(list);
     }
 
-    // 상세 정보
+    /**
+     * 음식점 정보 상세
+     * - 리뷰도 함께 전송
+     */
     @GetMapping("/restaurant/{idx}")
     ResponseEntity getRestaurantList(
             @PathVariable Long idx

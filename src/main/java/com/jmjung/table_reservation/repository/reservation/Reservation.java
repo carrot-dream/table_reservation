@@ -30,7 +30,7 @@ public class Reservation {
         this.restaurantIdx = restaurantIdx;
     }
 
-    ReservationStatus reservationStatus() {
+    public ReservationStatus reservationStatus() {
         return ReservationStatus.from(this.status);
     }
 

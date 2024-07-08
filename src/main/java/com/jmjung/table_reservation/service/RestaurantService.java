@@ -2,7 +2,10 @@ package com.jmjung.table_reservation.service;
 
 import com.jmjung.table_reservation.exception.auth.InvalidUserException;
 import com.jmjung.table_reservation.exception.restaurant.NotFoundRestaurantException;
+import com.jmjung.table_reservation.model.restaurant.RestaurantListItemResponse;
 import com.jmjung.table_reservation.model.restaurant.RestaurantRequest;
+import com.jmjung.table_reservation.repository.reservation.Reservation;
+import com.jmjung.table_reservation.repository.reservation.ReservationRepository;
 import com.jmjung.table_reservation.repository.restaurant.Restaurant;
 import com.jmjung.table_reservation.repository.restaurant.RestaurantRepository;
 import com.jmjung.table_reservation.repository.user.MemberRepository;
@@ -11,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +25,37 @@ public class RestaurantService {
     private final MemberRepository memberRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public List<Restaurant> allRestaurants() {
+    private final ReservationRepository reservationRepository;
+
+
+    public List<RestaurantListItemResponse> allRestaurants() {
         // TODO: 예약 정보 찾아서 같이 내려줘야 함. ->
-        return restaurantRepository.findAll();
+        var list = restaurantRepository.findAll();
+
+        var restaurantIdxList = list.stream()
+                .map(restaurant -> restaurant.getIdx())
+                .collect(Collectors.toList());
+
+        var map = reservationRepository.findAllByRestaurantIdxIn(restaurantIdxList)
+                .stream()
+                .collect(Collectors.groupingBy(Reservation::getRestaurantIdx));
+
+        return list.stream()
+                .map((item) -> {
+                    var reservationList = map.get(item.getIdx());
+                    Optional<Reservation> reservation;
+                    if (reservationList.size() != 0) {
+                        var result = reservationList.get(reservationList.size() - 1);
+                        reservation = Optional.of(result);
+                    } else  {
+                        reservation = Optional.empty();
+                    }
+                    return new RestaurantListItemResponse(
+                            item,
+                            reservation
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     public Restaurant restaurant(

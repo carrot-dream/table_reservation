@@ -10,4 +10,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     Optional<Reservation> findTopByRestaurantIdxOrderByCreatedAtDesc(Long restaurantIdx);
     List<Reservation> findAllByRestaurantIdx(Long restaurantIdx);
+
+    List<Reservation> findAllByRestaurantIdxIn(List<Long> restaurantIdxList);
 }
