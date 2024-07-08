@@ -1,11 +1,13 @@
 package com.jmjung.table_reservation.service;
 
+import com.jmjung.table_reservation.exception.auth.InvalidUserException;
 import com.jmjung.table_reservation.exception.reservation.InvalidReservationTimeException;
 import com.jmjung.table_reservation.exception.reservation.NotFoundReservationException;
 import com.jmjung.table_reservation.exception.restaurant.NotFoundRestaurantException;
 import com.jmjung.table_reservation.repository.reservation.ReservationRepository;
 import com.jmjung.table_reservation.repository.reservation.Reservation;
 import com.jmjung.table_reservation.repository.restaurant.RestaurantRepository;
+import com.jmjung.table_reservation.repository.user.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.List;
 @Transactional
 public class ReservationService {
 
+    private final MemberRepository memberRepository;
     private final RestaurantRepository restaurantRepository;
     private final ReservationRepository reservationRepository;
 
@@ -28,8 +31,12 @@ public class ReservationService {
      */
     public Reservation reserve(
             Long restaurantIdx,
+            String memberId,
             Date reservationAt
     ) {
+        var member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new InvalidUserException());
+
         if (!reservationAt.after(new Date())) {
             throw new InvalidReservationTimeException();
         }
@@ -42,7 +49,7 @@ public class ReservationService {
                 .findTopByRestaurantIdxOrderByCreatedAtDesc(restaurantIdx);
 
         if (reservation.isEmpty() || reservation.get().canReserve()) {
-            var newReservation = new Reservation(restaurantIdx, reservationAt);
+            var newReservation = new Reservation(restaurantIdx, member.getIdx(), reservationAt);
             return reservationRepository.save(newReservation);
         } else {
             return reservation.get();

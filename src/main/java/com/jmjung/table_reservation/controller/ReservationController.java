@@ -5,6 +5,8 @@ import com.jmjung.table_reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,10 +25,12 @@ public class ReservationController {
     @PostMapping("/reservation/{restaurantIdx}")
     ResponseEntity reserve(
             @PathVariable Long restaurantIdx,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody ReservationReserveRequest request
     ) {
+        var memberId = userDetails.getUsername();
         var reservation = reservationService
-                .reserve(restaurantIdx, request.getReservationAt());
+                .reserve(restaurantIdx, memberId, request.getReservationAt());
         return ResponseEntity.ok(reservation);
     }
 

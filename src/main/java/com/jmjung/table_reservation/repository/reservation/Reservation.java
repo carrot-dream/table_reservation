@@ -16,15 +16,18 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idx;
     Long restaurantIdx;
+    Long memberIdx;
     Integer status;
     Date reservationAt;
     Date createdAt;
 
     public Reservation(
             Long restaurantIdx,
+            Long memberIdx,
             Date reservationAt
     ) {
         this.reservationAt = reservationAt;
+        this.memberIdx = memberIdx;
         this.createdAt = new Date();
         this.status = 1;
         this.restaurantIdx = restaurantIdx;
@@ -44,6 +47,10 @@ public class Reservation {
 
     public void cancel() {
         status = ReservationStatus.CANCEL.getCode();
+    }
+
+    public Boolean canWriteReview() {
+        return reservationStatus() == ReservationStatus.DONE;
     }
 
     public Boolean canReserve() {

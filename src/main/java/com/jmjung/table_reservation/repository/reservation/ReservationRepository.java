@@ -12,4 +12,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByRestaurantIdx(Long restaurantIdx);
 
     List<Reservation> findAllByRestaurantIdxIn(List<Long> restaurantIdxList);
+    List<Reservation> findAllByMemberIdx(Long memberIdx);
+    boolean existsByMemberIdx(Long memberIdx);
 }

@@ -7,6 +7,7 @@ import com.jmjung.table_reservation.exception.review.InvalidMerchantException;
 import com.jmjung.table_reservation.exception.review.InvalidReviewWriterException;
 import com.jmjung.table_reservation.exception.review.NotFoundReviewException;
 import com.jmjung.table_reservation.model.review.ReviewRequest;
+import com.jmjung.table_reservation.repository.reservation.ReservationRepository;
 import com.jmjung.table_reservation.repository.restaurant.RestaurantRepository;
 import com.jmjung.table_reservation.repository.review.Review;
 import com.jmjung.table_reservation.repository.review.ReviewRepository;
@@ -15,6 +16,8 @@ import com.jmjung.table_reservation.repository.user.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +28,26 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final RestaurantRepository restaurantRepository;
+    private final ReservationRepository reservationRepository;
 
+
+    // 사용자만 가능하도록 처리
     public Review create(
             String  memberId,
             ReviewRequest request
     ) {
         var user = memberRepository.findById(memberId)
                 .orElseThrow(() -> new InvalidUserException());
+
+        var list = reservationRepository.findAllByMemberIdx(user.getIdx()).stream()
+                .filter(reservation -> reservation.canWriteReview())
+                .collect(Collectors.toList());
+        if (list.isEmpty()) {
+            throw new InvalidReviewWriterException();
+        }
+
         var review = request.createEntity(user.getIdx());
+
         return reviewRepository.save(review);
     }
 
