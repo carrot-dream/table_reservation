@@ -18,4 +18,8 @@ public class Role {
     String name;
     Date createdAt;
 
+    public boolean isMerchant() {
+        return name.equals("MERCHANT");
+    }
+
 }

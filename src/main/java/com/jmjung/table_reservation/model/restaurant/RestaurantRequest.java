@@ -18,13 +18,13 @@ public class RestaurantRequest {
     }
 
     public Restaurant update(Restaurant restaurant) {
-        if (!name.isEmpty()) {
+        if (!name.isEmpty() && !name.isBlank()) {
             restaurant.setName(name);
         }
-        if (!description.isEmpty()) {
+        if (!description.isEmpty() && !description.isBlank()) {
             restaurant.setDescription(description);
         }
-        if (!location.isEmpty()) {
+        if (!location.isEmpty() && !!location.isBlank()) {
             restaurant.setLocation(location);
         }
 
