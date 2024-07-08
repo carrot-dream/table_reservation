@@ -1,7 +1,6 @@
 package com.jmjung.table_reservation.controller;
 
 import com.jmjung.table_reservation.model.restaurant.RestaurantRequest;
-import com.jmjung.table_reservation.repository.restaurant.Restaurant;
 import com.jmjung.table_reservation.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,7 +34,6 @@ public class RestaurantController {
     ResponseEntity getRestaurantList(
             @PathVariable Long idx
     ) {
-        // TODO: 리뷰정보 같이
         var restaurant = restaurantService.restaurant(idx);
         return ResponseEntity.ok(restaurant);
     }

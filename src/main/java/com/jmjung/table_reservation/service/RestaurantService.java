@@ -2,12 +2,14 @@ package com.jmjung.table_reservation.service;
 
 import com.jmjung.table_reservation.exception.auth.InvalidUserException;
 import com.jmjung.table_reservation.exception.restaurant.NotFoundRestaurantException;
+import com.jmjung.table_reservation.model.restaurant.RestaurantDetailResponse;
 import com.jmjung.table_reservation.model.restaurant.RestaurantListItemResponse;
 import com.jmjung.table_reservation.model.restaurant.RestaurantRequest;
 import com.jmjung.table_reservation.repository.reservation.Reservation;
 import com.jmjung.table_reservation.repository.reservation.ReservationRepository;
 import com.jmjung.table_reservation.repository.restaurant.Restaurant;
 import com.jmjung.table_reservation.repository.restaurant.RestaurantRepository;
+import com.jmjung.table_reservation.repository.review.ReviewRepository;
 import com.jmjung.table_reservation.repository.user.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
 
     private final ReservationRepository reservationRepository;
+
+    private final ReviewRepository reviewRepository;
 
 
     public List<RestaurantListItemResponse> allRestaurants() {
@@ -58,12 +62,22 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
-    public Restaurant restaurant(
+    public RestaurantDetailResponse restaurant(
             Long idx
     ) {
-        Restaurant restaurant = restaurantRepository.findById(idx)
+        var restaurant = restaurantRepository.findById(idx)
                 .orElseThrow(() -> new NotFoundRestaurantException());
-        return restaurant;
+
+        var reservation = reservationRepository
+                .findTopByRestaurantIdxOrderByCreatedAtDesc(restaurant.getIdx());
+
+        var reviewList = reviewRepository.findAllByRestaurantIdx(restaurant.getIdx());
+
+        return new RestaurantDetailResponse(
+                restaurant,
+                reservation,
+                reviewList
+        );
     }
 
     public Restaurant create(
