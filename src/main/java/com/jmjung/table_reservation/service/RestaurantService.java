@@ -1,7 +1,7 @@
 package com.jmjung.table_reservation.service;
 
 import com.jmjung.table_reservation.exception.auth.InvalidUserException;
-import com.jmjung.table_reservation.exception.restaurant.NotFoundRestaurant;
+import com.jmjung.table_reservation.exception.restaurant.NotFoundRestaurantException;
 import com.jmjung.table_reservation.model.restaurant.RestaurantRequest;
 import com.jmjung.table_reservation.repository.restaurant.Restaurant;
 import com.jmjung.table_reservation.repository.restaurant.RestaurantRepository;
@@ -29,7 +29,7 @@ public class RestaurantService {
             Long idx
     ) {
         Restaurant restaurant = restaurantRepository.findById(idx)
-                .orElseThrow(() -> new NotFoundRestaurant());
+                .orElseThrow(() -> new NotFoundRestaurantException());
         return restaurant;
     }
 
@@ -49,7 +49,7 @@ public class RestaurantService {
             RestaurantRequest request
     ) {
         Restaurant restaurant = restaurantRepository.findById(idx)
-                .orElseThrow(() -> new NotFoundRestaurant());
+                .orElseThrow(() -> new NotFoundRestaurantException());
         return request.update(restaurant);
     }
 
@@ -57,7 +57,7 @@ public class RestaurantService {
         Long idx
     ) {
         Restaurant restaurant = restaurantRepository.findById(idx)
-                .orElseThrow(() -> new NotFoundRestaurant());
+                .orElseThrow(() -> new NotFoundRestaurantException());
         restaurantRepository.delete(restaurant);
         return "success";
     }

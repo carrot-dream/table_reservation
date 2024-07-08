@@ -23,6 +23,7 @@ public class MemberController {
 
     /**
      * 회원가입
+     * - roleIdx로 점장인지 고객인지 할당
      */
     @PostMapping("/auth/signup")
     public ResponseEntity<?> singup(
@@ -35,6 +36,7 @@ public class MemberController {
 
     /**
      * 로그인
+     * - 성공시 인증 토큰 반환
      */
     @PostMapping("/auth/signin")
     public ResponseEntity<?> sinein(

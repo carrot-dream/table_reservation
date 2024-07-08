@@ -1,9 +1,10 @@
-package com.jmjung.table_reservation.exception.restaurant;
+package com.jmjung.table_reservation.exception.reservation;
 
 import com.jmjung.table_reservation.exception.AbstractException;
 import org.springframework.http.HttpStatus;
 
-public class NotFoundRestaurant extends AbstractException {
+public class NotFoundReservationException extends AbstractException {
+
     @Override
     public int getStatusCode() {
         return HttpStatus.BAD_REQUEST.value();
@@ -11,6 +12,6 @@ public class NotFoundRestaurant extends AbstractException {
 
     @Override
     public String getMessage() {
-        return "not found restaurant";
+        return "not found reservation";
     }
 }
