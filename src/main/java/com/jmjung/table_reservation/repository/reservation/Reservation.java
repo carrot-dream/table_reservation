@@ -53,6 +53,12 @@ public class Reservation {
         return reservationStatus() == ReservationStatus.DONE;
     }
 
+    public Boolean canDone() {
+        var status = reservationStatus();
+        var before10 = new Date(new Date().getTime() - 60 * 10 * 1000);
+        return reservationAt.before(before10) && status == ReservationStatus.ACCEPT;
+    }
+
     public Boolean canReserve() {
         var status = reservationStatus();
 

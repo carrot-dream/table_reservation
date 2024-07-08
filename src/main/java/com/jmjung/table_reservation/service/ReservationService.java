@@ -1,6 +1,7 @@
 package com.jmjung.table_reservation.service;
 
 import com.jmjung.table_reservation.exception.auth.InvalidUserException;
+import com.jmjung.table_reservation.exception.reservation.InvalidReservationForDoneException;
 import com.jmjung.table_reservation.exception.reservation.InvalidReservationTimeException;
 import com.jmjung.table_reservation.exception.reservation.NotFoundReservationException;
 import com.jmjung.table_reservation.exception.restaurant.NotFoundRestaurantException;
@@ -66,9 +67,18 @@ public class ReservationService {
         return reservationRepository.findAllByRestaurantIdx(restaurantIdx);
     }
 
+    /**
+     * 에약 완료 처리
+     * - 예약 시간이 현재보다 10분전이어야 하고 Accept 상태여야 가능함.
+     */
     public Reservation done(Long idx) {
         var reservation = reservationRepository.findById(idx)
                 .orElseThrow(() -> new NotFoundReservationException());
+
+        if (!reservation.canDone()) {
+            throw new InvalidReservationForDoneException();
+        }
+
         reservation.done();
         return reservationRepository.save(reservation);
     }

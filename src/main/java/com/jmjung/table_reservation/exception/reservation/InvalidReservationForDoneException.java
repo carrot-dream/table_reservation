@@ -3,7 +3,7 @@ package com.jmjung.table_reservation.exception.reservation;
 import com.jmjung.table_reservation.exception.AbstractException;
 import org.springframework.http.HttpStatus;
 
-public class InvalidUserForWriteReviewException extends AbstractException {
+public class InvalidReservationForDoneException extends AbstractException {
     @Override
     public int getStatusCode() {
         return HttpStatus.BAD_REQUEST.value();
@@ -11,6 +11,6 @@ public class InvalidUserForWriteReviewException extends AbstractException {
 
     @Override
     public String getMessage() {
-        return "invalid user for writing reivew";
+        return "invalid reservation for done";
     }
 }
